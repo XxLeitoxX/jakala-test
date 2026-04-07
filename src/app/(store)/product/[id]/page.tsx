@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { ProductBackButton } from "@/modules/products/components/ProductBackButton";
 import { ApiError, getProductById } from "@/modules/products/services/productService";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { getImageProxyUrl } from "@/utils/getImageProxyUrl";
@@ -62,12 +63,15 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             <li>Regar {product.wateringsPerWeek ?? 1} vez por semana</li>
             <li>Fertilizar con {product.fertilizerType || "nutrientes basicos"}</li>
           </ul>
-          <button
-            type="button"
-            className="mt-4 h-11 min-w-[180px] rounded-full bg-[#7b1848] px-6 text-sm font-bold text-white transition hover:bg-[#65123a] focus:outline-none focus:ring-2 focus:ring-[#dcb1c3]"
-          >
-            Añadir al carrito
-          </button>
+          <div className="mt-4 flex flex-col items-start gap-3">
+            <button
+              type="button"
+              className="h-11 min-w-[180px] rounded-full bg-[#7b1848] px-6 text-sm font-bold text-white transition hover:bg-[#65123a] focus:outline-none focus:ring-2 focus:ring-[#dcb1c3]"
+            >
+              Añadir al carrito
+            </button>
+            <ProductBackButton className="h-11 min-w-[180px]" />
+          </div>
         </div>
       </article>
     </main>
