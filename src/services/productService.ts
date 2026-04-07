@@ -1,10 +1,5 @@
 import { Product } from "@/core/product";
-import { Agent } from "undici";
-
-const API_BASE_URL = "https://dulces-petalos.jakala.es";
-const insecureAgent = new Agent({
-  connect: { rejectUnauthorized: false },
-});
+import { api } from "@/services/api";
 
 class ApiError extends Error {
   constructor(
@@ -46,27 +41,19 @@ const parseProduct = (input: unknown): Product => {
 };
 
 async function apiRequest<T>(path: string): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: { "Content-Type": "application/json" },
-    next: { revalidate: 60 },
-    // La API de prueba expone un certificado expirado; en entorno servidor
-    // permitimos la conexion para que la app siga funcionando durante la prueba tecnica.
-    ...(typeof window === "undefined" ? ({ dispatcher: insecureAgent } as object) : {}),
-  });
-
-  if (!response.ok) {
-    throw new ApiError("Error al consultar la API de productos", response.status);
-  }
-
   try {
-    return (await response.json()) as T;
-  } catch {
-    throw new ApiError("La API devolvio un JSON invalido", response.status);
+    const response = await api.get<T>(path);
+    return response.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new ApiError(error.message);
+    }
+    throw new ApiError("Error al consultar la API de productos");
   }
 }
 
 export async function getProducts(page = 1, limit = 6): Promise<ProductsPage> {
-  const data = await apiRequest<unknown[]>("/api/v1/product");
+  const data = await apiRequest<unknown[]>("/product");
   const allProducts = data.map(parseProduct);
   const start = (page - 1) * limit;
   const items = allProducts.slice(start, start + limit);
@@ -83,7 +70,7 @@ export async function getProducts(page = 1, limit = 6): Promise<ProductsPage> {
 }
 
 export async function getProductById(productId: string): Promise<Product> {
-  const data = await apiRequest<unknown>(`/api/v1/product/${productId}`);
+  const data = await apiRequest<unknown>(`/product/${productId}`);
   return parseProduct(data);
 }
 

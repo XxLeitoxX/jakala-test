@@ -1,22 +1,19 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ImgHTMLAttributes } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 import { ProductCatalog } from "@/components/ProductCatalog";
 import { Product } from "@/core/product";
+import { useProductCatalog } from "@/hooks/useProductCatalog";
 
 vi.mock("next/image", () => ({
   // eslint-disable-next-line @next/next/no-img-element
   default: (props: ImgHTMLAttributes<HTMLImageElement>) => <img {...props} alt={props.alt} />,
 }));
 
-vi.mock("@/hooks/useProducts", () => ({
-  useProducts: vi.fn(),
-}));
-
-vi.mock("react-intersection-observer", () => ({
-  useInView: () => ({ ref: vi.fn(), inView: false }),
+vi.mock("@/hooks/useProductCatalog", () => ({
+  useProductCatalog: vi.fn(),
 }));
 
 const mockProducts: Product[] = [
@@ -26,6 +23,7 @@ const mockProducts: Product[] = [
     description: "Ramo clasico rojo",
     image: "https://dulces-petalos.jakala.es/images/rosas.jpg",
     price: 29.99,
+    isNew: false,
   },
   {
     id: "2",
@@ -33,32 +31,51 @@ const mockProducts: Product[] = [
     description: "Perfectos para celebraciones",
     image: "https://dulces-petalos.jakala.es/images/tulipanes.jpg",
     price: 24.5,
+    isNew: false,
   },
 ];
 
 describe("ProductCatalog", () => {
-  it("filtra productos al escribir en SearchBar", async () => {
-    const { useProducts } = await import("@/hooks/useProducts");
+  it("muestra skeletons en carga inicial", async () => {
+    vi.clearAllMocks();
 
-    vi.mocked(useProducts).mockReturnValue({
-      data: {
-        pages: [
-          {
-            items: mockProducts,
-            page: 1,
-            limit: 6,
-            total: 2,
-            nextPage: null,
-          },
-        ],
-      },
+    vi.mocked(useProductCatalog).mockReturnValue({
+      products: [],
+      searchTerm: "",
+      setSearchTerm: vi.fn(),
+      isLoading: true,
+      isError: false,
+      error: null,
+      isSearching: false,
+      hasNextPage: false,
+      isFetchingNextPage: false,
+      fetchNextPage: vi.fn(),
+      animatedIds: new Set(),
+      sentinelRef: vi.fn(),
+    });
+
+    render(<ProductCatalog />);
+
+    expect(screen.getByLabelText("Cargando productos")).toBeInTheDocument();
+  });
+
+  it("filtra productos al escribir en SearchBar", async () => {
+    const setSearchTerm = vi.fn();
+
+    vi.mocked(useProductCatalog).mockReturnValue({
+      products: mockProducts,
+      searchTerm: "",
+      setSearchTerm,
       isLoading: false,
       isError: false,
       error: null,
-      fetchNextPage: vi.fn(),
+      isSearching: false,
       hasNextPage: false,
       isFetchingNextPage: false,
-    } as ReturnType<typeof useProducts>);
+      fetchNextPage: vi.fn(),
+      animatedIds: new Set(),
+      sentinelRef: vi.fn(),
+    });
 
     render(<ProductCatalog />);
 
@@ -66,9 +83,51 @@ describe("ProductCatalog", () => {
     expect(screen.getByText("Tulipanes Blancos")).toBeInTheDocument();
 
     await userEvent.type(screen.getByLabelText("Buscar en nuestra tienda"), "tulipanes");
+    expect(setSearchTerm).toHaveBeenCalled();
+  });
 
-    expect(screen.queryByText("Ramo de Rosas")).not.toBeInTheDocument();
-    expect(screen.getByText("Tulipanes Blancos")).toBeInTheDocument();
+  it("muestra mensaje personalizado cuando hay error de API", async () => {
+    vi.mocked(useProductCatalog).mockReturnValue({
+      products: [],
+      searchTerm: "",
+      setSearchTerm: vi.fn(),
+      isLoading: false,
+      isError: true,
+      error: new Error("No se pudo obtener el listado de productos"),
+      isSearching: false,
+      hasNextPage: false,
+      isFetchingNextPage: false,
+      fetchNextPage: vi.fn(),
+      animatedIds: new Set(),
+      sentinelRef: vi.fn(),
+    });
+
+    render(<ProductCatalog />);
+
+    expect(screen.getByText("No se pudo obtener el listado de productos")).toBeInTheDocument();
+  });
+
+  it("llama fetchNextPage cuando el centinela entra en viewport", async () => {
+    const fetchNextPage = vi.fn();
+    vi.mocked(useProductCatalog).mockReturnValue({
+      products: mockProducts,
+      searchTerm: "",
+      setSearchTerm: vi.fn(),
+      isLoading: false,
+      isError: false,
+      error: null,
+      isSearching: false,
+      hasNextPage: true,
+      isFetchingNextPage: false,
+      fetchNextPage,
+      animatedIds: new Set(),
+      sentinelRef: vi.fn(),
+    });
+
+    render(<ProductCatalog />);
+    fireEvent.click(screen.getByRole("button", { name: "Ver más" }));
+
+    await waitFor(() => expect(fetchNextPage).toHaveBeenCalled());
   });
 });
 
