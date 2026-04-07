@@ -1,10 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import { ApiError, getProducts } from "@/services/productService";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const page = Number(request.nextUrl.searchParams.get("page") ?? "1");
+  const limit = Number(request.nextUrl.searchParams.get("limit") ?? "6");
+
   try {
-    const products = await getProducts();
+    const products = await getProducts(page, limit);
     return NextResponse.json(products);
   } catch (error) {
     if (error instanceof ApiError) {

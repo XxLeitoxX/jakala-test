@@ -1,23 +1,26 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
-import { Product } from "@/core/product";
+import { ProductsPage } from "@/services/productService";
 
 export const PRODUCTS_QUERY_KEY = ["products"];
+const PRODUCTS_PAGE_LIMIT = 6;
 
-const fetchProducts = async (): Promise<Product[]> => {
-  const response = await fetch("/api/products");
+const fetchProducts = async (pageParam: number): Promise<ProductsPage> => {
+  const response = await fetch(`/api/products?page=${pageParam}&limit=${PRODUCTS_PAGE_LIMIT}`);
   if (!response.ok) {
     throw new Error(`No se pudo obtener el listado de productos (HTTP ${response.status})`);
   }
-  return (await response.json()) as Product[];
+  return (await response.json()) as ProductsPage;
 };
 
 export const useProducts = () =>
-  useQuery<Product[], Error>({
+  useInfiniteQuery<ProductsPage, Error>({
     queryKey: PRODUCTS_QUERY_KEY,
-    queryFn: fetchProducts,
+    queryFn: ({ pageParam }) => fetchProducts(pageParam as number),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => lastPage.nextPage ?? undefined,
     // Cache conservador: evita refetches agresivos al navegar entre listado/detalle.
     staleTime: 60_000,
   });

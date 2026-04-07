@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Nunito } from "next/font/google";
+import { DM_Sans, Nunito } from "next/font/google";
 import Image from "next/image";
 import "./globals.css";
 import { Providers } from "@/app/providers";
@@ -8,6 +8,12 @@ const nunito = Nunito({
   variable: "--font-nunito",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+});
+
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
+  subsets: ["latin"],
+  weight: ["400"],
 });
 
 export const metadata: Metadata = {
@@ -21,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`${nunito.variable} h-full antialiased`}>
+    <html lang="es" className={`${nunito.variable} ${dmSans.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col text-slate-900">
         <Providers>
           <div className="app-frame">

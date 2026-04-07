@@ -16,6 +16,14 @@ class ApiError extends Error {
   }
 }
 
+export interface ProductsPage {
+  items: Product[];
+  page: number;
+  limit: number;
+  total: number;
+  nextPage: number | null;
+}
+
 const parseProduct = (input: unknown): Product => {
   const candidate = input as Record<string, unknown>;
   const description =
@@ -29,6 +37,7 @@ const parseProduct = (input: unknown): Product => {
     price: Number(candidate.price ?? 0),
     image: String(candidate.image ?? candidate.imgUrl ?? ""),
     description,
+    isNew: typeof candidate.isNew === "boolean" ? candidate.isNew : false,
     binomialName: String(candidate.binomialName ?? ""),
     wateringsPerWeek:
       typeof candidate.wateringsPerWeek === "number" ? candidate.wateringsPerWeek : undefined,
@@ -56,9 +65,21 @@ async function apiRequest<T>(path: string): Promise<T> {
   }
 }
 
-export async function getProducts(): Promise<Product[]> {
+export async function getProducts(page = 1, limit = 6): Promise<ProductsPage> {
   const data = await apiRequest<unknown[]>("/api/v1/product");
-  return data.map(parseProduct);
+  const allProducts = data.map(parseProduct);
+  const start = (page - 1) * limit;
+  const items = allProducts.slice(start, start + limit);
+  const nextPage = start + limit < allProducts.length ? page + 1 : null;
+
+  // La API de prueba no expone paginacion nativa; simulamos por pagina con slice().
+  return {
+    items,
+    page,
+    limit,
+    total: allProducts.length,
+    nextPage,
+  };
 }
 
 export async function getProductById(productId: string): Promise<Product> {

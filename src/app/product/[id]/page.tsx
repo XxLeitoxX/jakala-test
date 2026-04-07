@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { ApiError, getProductById } from "@/services/productService";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { getImageProxyUrl } from "@/utils/getImageProxyUrl";
+import { PRODUCT_BLUR_DATA_URL } from "@/utils/imagePlaceholder";
 
 interface ProductDetailPageProps {
   params: Promise<{ id: string }>;
@@ -40,12 +41,16 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
         <span>{product.name}</span>
       </div>
       <article className="grid grid-cols-1 gap-6 md:grid-cols-[1.08fr_.92fr] md:gap-8">
-        <div className="relative min-h-[360px] overflow-hidden rounded-3xl md:min-h-[520px]">
+        <div className="overflow-hidden rounded-3xl">
           <Image
             src={getImageProxyUrl(product.image)}
-            alt={product.name}
-            fill
-            className="object-cover"
+            alt={`Fotografia en primer plano de ${product.name}, una flor de la categoria ${product.fertilizerType || "flores ornamentales"}`}
+            width={800}
+            height={800}
+            priority
+            placeholder="blur"
+            blurDataURL={PRODUCT_BLUR_DATA_URL}
+            className="h-full w-full object-cover product-image-enhanced aspect-[4/3] md:aspect-[3/4]"
             sizes="(max-width: 768px) 100vw, 50vw"
           />
         </div>
@@ -53,7 +58,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           <h1 className="text-5xl font-bold text-[#1e1e24]">{product.name}</h1>
           <p className="text-lg text-[#7b7b86]">{product.binomialName || product.description}</p>
           <p className="pt-2 text-4xl font-bold text-[#1e1e24]">{formatCurrency(product.price)}</p>
-          <ul className="list-disc space-y-1 pl-4 text-sm text-[#3c3c45]">
+          <ul className="list-disc space-y-1 pl-9 text-sm text-[#3c3c45]">
             <li>Regar {product.wateringsPerWeek ?? 1} vez por semana</li>
             <li>Fertilizar con {product.fertilizerType || "nutrientes basicos"}</li>
           </ul>

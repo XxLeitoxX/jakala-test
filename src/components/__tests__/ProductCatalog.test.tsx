@@ -15,6 +15,10 @@ vi.mock("@/hooks/useProducts", () => ({
   useProducts: vi.fn(),
 }));
 
+vi.mock("react-intersection-observer", () => ({
+  useInView: () => ({ ref: vi.fn(), inView: false }),
+}));
+
 const mockProducts: Product[] = [
   {
     id: "1",
@@ -37,10 +41,23 @@ describe("ProductCatalog", () => {
     const { useProducts } = await import("@/hooks/useProducts");
 
     vi.mocked(useProducts).mockReturnValue({
-      data: mockProducts,
+      data: {
+        pages: [
+          {
+            items: mockProducts,
+            page: 1,
+            limit: 6,
+            total: 2,
+            nextPage: null,
+          },
+        ],
+      },
       isLoading: false,
       isError: false,
       error: null,
+      fetchNextPage: vi.fn(),
+      hasNextPage: false,
+      isFetchingNextPage: false,
     } as ReturnType<typeof useProducts>);
 
     render(<ProductCatalog />);
@@ -48,7 +65,7 @@ describe("ProductCatalog", () => {
     expect(screen.getByText("Ramo de Rosas")).toBeInTheDocument();
     expect(screen.getByText("Tulipanes Blancos")).toBeInTheDocument();
 
-    await userEvent.type(screen.getByLabelText("Buscar productos"), "tulipanes");
+    await userEvent.type(screen.getByLabelText("Buscar en nuestra tienda"), "tulipanes");
 
     expect(screen.queryByText("Ramo de Rosas")).not.toBeInTheDocument();
     expect(screen.getByText("Tulipanes Blancos")).toBeInTheDocument();
