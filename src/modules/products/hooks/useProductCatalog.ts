@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
 
-import { useProductFilter } from "@/hooks/useProductFilter";
-import { useProducts } from "@/hooks/useProducts";
+import { useProductFilter } from "@/modules/products/hooks/useProductFilter";
+import { useProducts } from "@/modules/products/hooks/useProducts";
 
 export const useProductCatalog = () => {
   const { data, isLoading, isError, error, fetchNextPage, hasNextPage, isFetchingNextPage } =
@@ -52,14 +52,7 @@ export const useProductCatalog = () => {
     if (hasUserScrolled && inView && hasNextPage && !isFetchingNextPage && !isSearching) {
       fetchNextPage();
     }
-  }, [
-    fetchNextPage,
-    hasNextPage,
-    hasUserScrolled,
-    inView,
-    isFetchingNextPage,
-    isSearching,
-  ]);
+  }, [fetchNextPage, hasNextPage, hasUserScrolled, inView, isFetchingNextPage, isSearching]);
 
   return {
     products: filteredProducts,

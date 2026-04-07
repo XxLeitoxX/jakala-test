@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { ApiError, getProducts } from "@/services/productService";
+import { ApiError, getProducts } from "@/modules/products/services/productService";
 
 export async function GET(request: NextRequest) {
   const page = Number(request.nextUrl.searchParams.get("page") ?? "1");

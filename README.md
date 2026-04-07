@@ -27,17 +27,35 @@ El objetivo técnico del proyecto es ofrecer una base sólida de frontend modern
 
 ## 🧱 Arquitectura del proyecto
 
-La estructura sigue separación por responsabilidades para reducir acoplamiento:
+La estructura actual sigue un enfoque **feature-first** dentro de `modules/`, manteniendo infraestructura y utilidades compartidas fuera del módulo:
 
 ```text
 src/
-├── app/          # Routing y entrypoints (Next App Router)
-├── components/   # Componentes visuales y de composición UI
-├── core/         # Modelos e interfaces de dominio
-├── hooks/        # Lógica reutilizable (headless hooks)
-├── services/     # Integraciones externas (API / clientes HTTP)
-└── utils/        # Utilidades puras compartidas
+├── app/
+│   ├── (store)/              # Route group de storefront (sin afectar URL publica)
+│   │   ├── page.tsx          # "/"
+│   │   └── product/[id]/     # "/product/:id"
+│   ├── api/                  # Endpoints internos de BFF/proxy
+│   │   ├── products/
+│   │   └── image/
+│   ├── layout.tsx
+│   ├── not-found.tsx
+│   └── globals.css
+├── modules/
+│   ├── products/             # Módulo funcional implementado
+│   │   ├── core/
+│   │   ├── services/
+│   │   ├── hooks/
+│   │   ├── components/
+│   │   └── __tests__/
+│   ├── auth/                 # Scaffold para crecimiento futuro
+│   ├── cart/                 # Scaffold para crecimiento futuro
+│   └── user/                 # Scaffold para crecimiento futuro
+├── services/                 # Infraestructura compartida (axios/api client)
+└── utils/                    # Utilidades puras compartidas
 ```
+
+> **Nota de escalabilidad:** `auth`, `cart` y `user` existen actualmente como carpetas base (scaffold) para mostrar cómo crecería el proyecto por módulos sin concentrar todo en una sola carpeta global de componentes.
 
 ### Headless Hooks
 
@@ -47,6 +65,14 @@ Esto permite:
 - UI más simple y legible.
 - tests más directos sobre comportamiento.
 - refactor seguro sin romper presentación.
+
+### ¿Por qué esta estructura escala mejor?
+
+- **Crecimiento por dominio, no por tipo de archivo**: cada módulo encapsula su core, hooks, servicios, componentes y tests.
+- **Menor acoplamiento**: los cambios de `products` rara vez impactan `auth`, `cart` o `user`.
+- **Onboarding más rápido**: un desarrollador nuevo encuentra todo lo de una feature en una sola zona.
+- **Rutas ordenadas con `route groups`**: `app/(store)` permite crecer en `app` sin mezclar storefront, admin, auth o landing pages.
+- **Evolución segura**: facilita dividir equipos por módulo y escalar a monorepo o microfrontends en fases futuras.
 
 ---
 

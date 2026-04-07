@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { Product } from "@/core/product";
+import { Product } from "@/modules/products/core/product";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { getImageProxyUrl } from "@/utils/getImageProxyUrl";
 import { PRODUCT_BLUR_DATA_URL } from "@/utils/imagePlaceholder";

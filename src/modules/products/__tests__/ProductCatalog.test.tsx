@@ -3,16 +3,16 @@ import userEvent from "@testing-library/user-event";
 import { ImgHTMLAttributes } from "react";
 import { describe, expect, it, vi } from "vitest";
 
-import { ProductCatalog } from "@/components/ProductCatalog";
-import { Product } from "@/core/product";
-import { useProductCatalog } from "@/hooks/useProductCatalog";
+import { ProductCatalog } from "@/modules/products/components/ProductCatalog";
+import { Product } from "@/modules/products/core/product";
+import { useProductCatalog } from "@/modules/products/hooks/useProductCatalog";
 
 vi.mock("next/image", () => ({
   // eslint-disable-next-line @next/next/no-img-element
   default: (props: ImgHTMLAttributes<HTMLImageElement>) => <img {...props} alt={props.alt} />,
 }));
 
-vi.mock("@/hooks/useProductCatalog", () => ({
+vi.mock("@/modules/products/hooks/useProductCatalog", () => ({
   useProductCatalog: vi.fn(),
 }));
 

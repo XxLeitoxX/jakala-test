@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { ApiError, getProductById } from "@/services/productService";
+import { ApiError, getProductById } from "@/modules/products/services/productService";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { getImageProxyUrl } from "@/utils/getImageProxyUrl";
 import { PRODUCT_BLUR_DATA_URL } from "@/utils/imagePlaceholder";

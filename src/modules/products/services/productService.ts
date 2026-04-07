@@ -1,4 +1,4 @@
-import { Product } from "@/core/product";
+import { Product } from "@/modules/products/core/product";
 import { api } from "@/services/api";
 
 class ApiError extends Error {
@@ -59,7 +59,6 @@ export async function getProducts(page = 1, limit = 6): Promise<ProductsPage> {
   const items = allProducts.slice(start, start + limit);
   const nextPage = start + limit < allProducts.length ? page + 1 : null;
 
-  // La API de prueba no expone paginacion nativa; simulamos por pagina con slice().
   return {
     items,
     page,

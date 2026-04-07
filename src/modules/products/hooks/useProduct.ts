@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-import { Product } from "@/core/product";
+import { Product } from "@/modules/products/core/product";
 
 const fetchProduct = async (productId: string): Promise<Product> => {
   const response = await fetch(`/api/products/${productId}`);

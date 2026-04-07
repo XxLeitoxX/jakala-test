@@ -1,6 +1,6 @@
-import { ProductCard } from "@/components/ProductCard";
-import { ProductCardSkeleton } from "@/components/ProductCardSkeleton";
-import { Product } from "@/core/product";
+import { ProductCard } from "@/modules/products/components/ProductCard";
+import { ProductCardSkeleton } from "@/modules/products/components/ProductCardSkeleton";
+import { Product } from "@/modules/products/core/product";
 
 interface ProductGridProps {
   products: Product[];

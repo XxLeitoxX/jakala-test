@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 
-import { Product } from "@/core/product";
+import { Product } from "@/modules/products/core/product";
 
 export const useProductFilter = (products: Product[]) => {
   const [searchTerm, setSearchTerm] = useState("");

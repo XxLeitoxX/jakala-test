@@ -19,6 +19,11 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   title: "Dulces Petalos",
   description: "Catalogo de productos de la floristeria Dulces Petalos",
+  icons: {
+    icon: "/assets/icons/logo.svg",
+    shortcut: "/assets/icons/logo.svg",
+    apple: "/assets/icons/logo.svg",
+  },
 };
 
 export default function RootLayout({

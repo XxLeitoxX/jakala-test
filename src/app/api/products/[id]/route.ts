@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { ApiError, getProductById } from "@/services/productService";
+import { ApiError, getProductById } from "@/modules/products/services/productService";
 
 interface RouteProps {
   params: Promise<{ id: string }>;

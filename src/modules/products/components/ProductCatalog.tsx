@@ -1,12 +1,12 @@
 "use client";
 
-import { ProductCatalogError } from "@/components/ProductCatalogError";
-import { ProductCatalogEmpty } from "@/components/ProductCatalogEmpty";
-import { ProductCatalogLoading } from "@/components/ProductCatalogLoading";
-import { ProductCatalogLoadMore } from "@/components/ProductCatalogLoadMore";
-import { ProductGrid } from "@/components/ProductGrid";
-import { SearchBar } from "@/components/SearchBar";
-import { useProductCatalog } from "@/hooks/useProductCatalog";
+import { ProductCatalogError } from "@/modules/products/components/ProductCatalogError";
+import { ProductCatalogEmpty } from "@/modules/products/components/ProductCatalogEmpty";
+import { ProductCatalogLoading } from "@/modules/products/components/ProductCatalogLoading";
+import { ProductCatalogLoadMore } from "@/modules/products/components/ProductCatalogLoadMore";
+import { ProductGrid } from "@/modules/products/components/ProductGrid";
+import { SearchBar } from "@/modules/products/components/SearchBar";
+import { useProductCatalog } from "@/modules/products/hooks/useProductCatalog";
 
 export const ProductCatalog = () => {
   const { products, searchTerm, setSearchTerm, isLoading, isError, error, isSearching, hasNextPage, isFetchingNextPage, fetchNextPage, animatedIds, sentinelRef } = useProductCatalog();

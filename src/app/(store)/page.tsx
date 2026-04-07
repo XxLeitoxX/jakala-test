@@ -1,4 +1,4 @@
-import { ProductCatalog } from "@/components/ProductCatalog";
+import { ProductCatalog } from "@/modules/products/components/ProductCatalog";
 
 export default function Home() {
   return (
@@ -7,3 +7,4 @@ export default function Home() {
     </main>
   );
 }
+
