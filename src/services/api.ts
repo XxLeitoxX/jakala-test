@@ -1,7 +1,8 @@
 import axios, { AxiosError } from "axios";
 import https from "node:https";
 
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+// Si la variable de entorno no existe, usamos la URL de Jakala por defecto
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://dulces-petalos.jakala.es/api/v1';
 
 if (!apiBaseUrl) {
   throw new Error("Falta configurar NEXT_PUBLIC_API_URL en .env.local");
@@ -9,7 +10,7 @@ if (!apiBaseUrl) {
 
 export const api = axios.create({
   baseURL: apiBaseUrl,
-  timeout: 10_000,
+  timeout: 10000,
   httpsAgent: new https.Agent({ rejectUnauthorized: false }),
 });
 
