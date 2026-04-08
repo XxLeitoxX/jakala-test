@@ -63,14 +63,14 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             <li>Regar {product.wateringsPerWeek ?? 1} vez por semana</li>
             <li>Fertilizar con {product.fertilizerType || "nutrientes basicos"}</li>
           </ul>
-          <div className="mt-4 flex flex-col items-start gap-3">
+          <div className="mt-4 flex flex-col items-stretch gap-3 sm:items-start">
             <button
               type="button"
-              className="h-11 min-w-[180px] rounded-full bg-[#7b1848] px-6 text-sm font-bold text-white transition hover:bg-[#65123a] focus:outline-none focus:ring-2 focus:ring-[#dcb1c3]"
+              className="h-11 w-full rounded-full bg-[#7b1848] px-6 text-sm font-bold text-white transition hover:bg-[#65123a] focus:outline-none focus:ring-2 focus:ring-[#dcb1c3] sm:min-w-[180px] sm:w-auto"
             >
               Añadir al carrito
             </button>
-            <ProductBackButton className="h-11 min-w-[180px]" />
+            <ProductBackButton className="h-11 w-full justify-center sm:min-w-[180px] sm:w-auto" />
           </div>
         </div>
       </article>
